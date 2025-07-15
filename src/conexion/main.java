@@ -31,7 +31,7 @@ public static void main(String[] args) {
 
     try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
         System.out.println("✅ ¡Conexión a Oracle exitosa!");
-        // 1. Insertar un nuevo banco
+            // 1. Insertar un nuevo banco
         //Banco nuevoBanco = new Banco(20, "Banco Financiero de bolivia", "Av. Principal 123", "San Isidro", "20100047218");
         //Banco.insertar(connection, nuevoBanco);
         
@@ -44,7 +44,16 @@ public static void main(String[] args) {
         //Inmueble nuevoInmueble2 = new Inmueble(3, 120.0, 310000.00, "Disponible", "Duplex", 1);
         //Inmueble.insertar(connection, nuevoInmueble2);
         
-        //Inmueble.eliminar(connection, 6); 
+        //Inmueble nuevoInmueble3 = new Inmueble(4, 800.0, 367000.00, "Disponible", "Duplex", 2);
+        //Inmueble.insertar(connection, nuevoInmueble3);
+        
+        //Inmueble nuevoInmueble4 = new Inmueble(5, 12.5, 45000.00, "Disponible", "Estacionamiento", 2);
+        //Inmueble.insertar(connection, nuevoInmueble4);
+
+        //Inmueble.eliminar(connection, 1); 
+        //Inmueble.eliminar(connection, 2); 
+        //Inmueble.eliminar(connection, 3); 
+        //Inmueble.eliminar(connection, 4); 
         
         //Departamento nuevoDepto = new Departamento(1, 3, 2, 2, "SI");
         //Departamento.insertar(connection, nuevoDepto);
@@ -103,7 +112,7 @@ public static void main(String[] args) {
         
         //Venta ventaInvalida = new Venta(3, java.sql.Date.valueOf("2025-10-20"), 5000.00, "Pendiente", 3);
         //Venta.insertar(connection, ventaInvalida);
-        
+
         
     } catch (SQLException e) {
         System.err.println("❌ Error durante la prueba: " + e.getMessage());

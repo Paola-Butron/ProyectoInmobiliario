@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Legal;
 
 import java.sql.Connection;
@@ -12,21 +8,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Representa la entidad Minuta. Contiene los datos del modelo y los
- * métodos estáticos para interactuar con la base de datos.
- */
 public class Minuta {
 
-    // --- Atributos que coinciden con la tabla MINUTA ---
-    private long idDocumento; // Clave Primaria y Foránea
+    private int idDocumento;
     private String notariaAsociada;
     private double montoTotal;
     private String formaDePago;
     private String constanciaDeAcabados;
 
-    // --- Constructor ---
-    public Minuta(long idDocumento, String notariaAsociada, double montoTotal, String formaDePago, String constanciaDeAcabados) {
+    public Minuta(int idDocumento, String notariaAsociada, double montoTotal, String formaDePago, String constanciaDeAcabados) {
         this.idDocumento = idDocumento;
         this.notariaAsociada = notariaAsociada;
         this.montoTotal = montoTotal;
@@ -34,9 +24,8 @@ public class Minuta {
         this.constanciaDeAcabados = constanciaDeAcabados;
     }
 
-    // --- Getters y Setters ---
-    public long getIdDocumento() { return idDocumento; }
-    public void setIdDocumento(long idDocumento) { this.idDocumento = idDocumento; }
+    public int getIdDocumento() { return idDocumento; }
+    public void setIdDocumento(int idDocumento) { this.idDocumento = idDocumento; }
     public String getNotariaAsociada() { return notariaAsociada; }
     public void setNotariaAsociada(String notariaAsociada) { this.notariaAsociada = notariaAsociada; }
     public double getMontoTotal() { return montoTotal; }
@@ -51,34 +40,30 @@ public class Minuta {
         return "Minuta{" + "idDocumento=" + idDocumento + ", montoTotal=" + montoTotal + "}";
     }
 
-    // =====================================================================
-    // MÉTODOS DE ACCESO A DATOS (DAO)
-    // =====================================================================
-
     public static void insertar(Connection conn, Minuta minuta) {
         String sql = "INSERT INTO Minuta (IDDOCUMENTO, NOTARIAASOCIADA, MONTOTOTAL, FORMADEPAGO, CONSTANCIADEACABADOS) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, minuta.getIdDocumento());
+            pstmt.setInt(1, minuta.getIdDocumento());
             pstmt.setString(2, minuta.getNotariaAsociada());
             pstmt.setDouble(3, minuta.getMontoTotal());
             pstmt.setString(4, minuta.getFormaDePago());
             pstmt.setString(5, minuta.getConstanciaDeAcabados());
             pstmt.executeUpdate();
-            System.out.println("✅ Nueva minuta insertada correctamente.");
+            System.out.println("Nueva minuta insertada correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al insertar la minuta: " + e.getMessage());
+            System.err.println("Error al insertar la minuta: " + e.getMessage());
         }
     }
 
-    public static Minuta buscarPorId(Connection conn, long id) {
+    public static Minuta buscarPorId(Connection conn, int id) {
         String sql = "SELECT * FROM Minuta WHERE IDDOCUMENTO = ?";
         Minuta minuta = null;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     minuta = new Minuta(
-                        rs.getLong("IDDOCUMENTO"),
+                        rs.getInt("IDDOCUMENTO"),
                         rs.getString("NOTARIAASOCIADA"),
                         rs.getDouble("MONTOTOTAL"),
                         rs.getString("FORMADEPAGO"),
@@ -87,7 +72,7 @@ public class Minuta {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar la minuta: " + e.getMessage());
+            System.err.println("Error al buscar la minuta: " + e.getMessage());
         }
         return minuta;
     }
@@ -99,7 +84,7 @@ public class Minuta {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 lista.add(new Minuta(
-                    rs.getLong("IDDOCUMENTO"),
+                    rs.getInt("IDDOCUMENTO"),
                     rs.getString("NOTARIAASOCIADA"),
                     rs.getDouble("MONTOTOTAL"),
                     rs.getString("FORMADEPAGO"),
@@ -107,29 +92,43 @@ public class Minuta {
                 ));
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener todas las minutas: " + e.getMessage());
+            System.err.println("Error al obtener todas las minutas: " + e.getMessage());
         }
         return lista;
     }
 
-    public static void eliminar(Connection conn, long id) {
+    public static void eliminar(Connection conn, int id) {
         String sql = "DELETE FROM Minuta WHERE IDDOCUMENTO = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             int filasAfectadas = pstmt.executeUpdate();
             if (filasAfectadas > 0) {
-                System.out.println("✅ Minuta con ID " + id + " eliminada correctamente.");
+                System.out.println("Minuta con ID " + id + " eliminada correctamente.");
             } else {
-                System.out.println("ℹ️ No se encontró ninguna minuta con ID " + id + ".");
+                System.out.println("No se encontró ninguna minuta con ID " + id + ".");
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar la minuta: " + e.getMessage());
+            System.err.println("Error al eliminar la minuta: " + e.getMessage());
+        }
+    }
+
+    public static void actualizar(Connection conn, Minuta minuta) {
+        String sql = "UPDATE Minuta SET NOTARIAASOCIADA = ?, MONTOTOTAL = ?, FORMADEPAGO = ?, CONSTANCIADEACABADOS = ? WHERE IDDOCUMENTO = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, minuta.getNotariaAsociada());
+            pstmt.setDouble(2, minuta.getMontoTotal());
+            pstmt.setString(3, minuta.getFormaDePago());
+            pstmt.setString(4, minuta.getConstanciaDeAcabados());
+            pstmt.setInt(5, minuta.getIdDocumento());
+
+            int filasAfectadas = pstmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("Minuta actualizada correctamente.");
+            } else {
+                System.out.println("No se encontró una minuta con el ID especificado.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar la minuta: " + e.getMessage());
         }
     }
 }
-
-
-
-
-
-

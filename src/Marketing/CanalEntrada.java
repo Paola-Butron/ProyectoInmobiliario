@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Marketing;
 
 import java.sql.Connection;
@@ -13,14 +9,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Representa la entidad CanalEntrada. Contiene los datos del modelo y los
- * métodos estáticos para interactuar con la base de datos.
- */
 public class CanalEntrada {
 
-    // --- Atributos que coinciden con la tabla CANALENTRADA ---
-    private long idCanalEntrada;
+    private int idCanalEntrada;
     private String nombreCampaña;
     private Date fechaInicio;
     private Date fechaFin;
@@ -28,10 +19,9 @@ public class CanalEntrada {
     private String estado;
     private String descripcion;
     private String tipo;
-    private long idCampaña; // Clave Foránea
+    private int idCampaña;
 
-    // --- Constructor ---
-    public CanalEntrada(long idCanalEntrada, String nombreCampaña, Date fechaInicio, Date fechaFin, double presupuesto, String estado, String descripcion, String tipo, long idCampaña) {
+    public CanalEntrada(int idCanalEntrada, String nombreCampaña, Date fechaInicio, Date fechaFin, double presupuesto, String estado, String descripcion, String tipo, int idCampaña) {
         this.idCanalEntrada = idCanalEntrada;
         this.nombreCampaña = nombreCampaña;
         this.fechaInicio = fechaInicio;
@@ -43,9 +33,8 @@ public class CanalEntrada {
         this.idCampaña = idCampaña;
     }
 
-    // --- Getters y Setters ---
-    public long getIdCanalEntrada() { return idCanalEntrada; }
-    public void setIdCanalEntrada(long idCanalEntrada) { this.idCanalEntrada = idCanalEntrada; }
+    public int getIdCanalEntrada() { return idCanalEntrada; }
+    public void setIdCanalEntrada(int idCanalEntrada) { this.idCanalEntrada = idCanalEntrada; }
     public String getNombreCampaña() { return nombreCampaña; }
     public void setNombreCampaña(String nombreCampaña) { this.nombreCampaña = nombreCampaña; }
     public Date getFechaInicio() { return fechaInicio; }
@@ -60,22 +49,18 @@ public class CanalEntrada {
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
-    public long getIdCampaña() { return idCampaña; }
-    public void setIdCampaña(long idCampaña) { this.idCampaña = idCampaña; }
+    public int getIdCampaña() { return idCampaña; }
+    public void setIdCampaña(int idCampaña) { this.idCampaña = idCampaña; }
 
     @Override
     public String toString() {
         return "CanalEntrada{" + "idCanalEntrada=" + idCanalEntrada + ", nombreCampaña='" + nombreCampaña + "'}";
     }
 
-    // =====================================================================
-    // MÉTODOS DE ACCESO A DATOS (DAO)
-    // =====================================================================
-
     public static void insertar(Connection conn, CanalEntrada canal) {
         String sql = "INSERT INTO CanalEntrada (IDCANALENTRADA, NOMBRECAMPAÑA, FECHAINICIO, FECHAFIN, PRESUPUESTO, ESTADO, DESCRIPCION, TIPO, IDCAMPAÑA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, canal.getIdCanalEntrada());
+            pstmt.setInt(1, canal.getIdCanalEntrada());
             pstmt.setString(2, canal.getNombreCampaña());
             pstmt.setDate(3, new java.sql.Date(canal.getFechaInicio().getTime()));
             pstmt.setDate(4, new java.sql.Date(canal.getFechaFin().getTime()));
@@ -83,23 +68,23 @@ public class CanalEntrada {
             pstmt.setString(6, canal.getEstado());
             pstmt.setString(7, canal.getDescripcion());
             pstmt.setString(8, canal.getTipo());
-            pstmt.setLong(9, canal.getIdCampaña());
+            pstmt.setInt(9, canal.getIdCampaña());
             pstmt.executeUpdate();
-            System.out.println("✅ Nuevo canal de entrada insertado correctamente.");
+            System.out.println("Nuevo canal de entrada insertado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al insertar el canal de entrada: " + e.getMessage());
+            System.err.println("Error al insertar el canal de entrada: " + e.getMessage());
         }
     }
 
-    public static CanalEntrada buscarPorId(Connection conn, long id) {
+    public static CanalEntrada buscarPorId(Connection conn, int id) {
         String sql = "SELECT * FROM CanalEntrada WHERE IDCANALENTRADA = ?";
         CanalEntrada canal = null;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     canal = new CanalEntrada(
-                        rs.getLong("IDCANALENTRADA"),
+                        rs.getInt("IDCANALENTRADA"),
                         rs.getString("NOMBRECAMPAÑA"),
                         rs.getDate("FECHAINICIO"),
                         rs.getDate("FECHAFIN"),
@@ -107,12 +92,12 @@ public class CanalEntrada {
                         rs.getString("ESTADO"),
                         rs.getString("DESCRIPCION"),
                         rs.getString("TIPO"),
-                        rs.getLong("IDCAMPAÑA")
+                        rs.getInt("IDCAMPAÑA")
                     );
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar el canal de entrada: " + e.getMessage());
+            System.err.println("Error al buscar el canal de entrada: " + e.getMessage());
         }
         return canal;
     }
@@ -124,7 +109,7 @@ public class CanalEntrada {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 lista.add(new CanalEntrada(
-                    rs.getLong("IDCANALENTRADA"),
+                    rs.getInt("IDCANALENTRADA"),
                     rs.getString("NOMBRECAMPAÑA"),
                     rs.getDate("FECHAINICIO"),
                     rs.getDate("FECHAFIN"),
@@ -132,27 +117,51 @@ public class CanalEntrada {
                     rs.getString("ESTADO"),
                     rs.getString("DESCRIPCION"),
                     rs.getString("TIPO"),
-                    rs.getLong("IDCAMPAÑA")
+                    rs.getInt("IDCAMPAÑA")
                 ));
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener todos los canales de entrada: " + e.getMessage());
+            System.err.println("Error al obtener todos los canales de entrada: " + e.getMessage());
         }
         return lista;
     }
 
-    public static void eliminar(Connection conn, long id) {
+    public static void eliminar(Connection conn, int id) {
         String sql = "DELETE FROM CanalEntrada WHERE IDCANALENTRADA = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             int filasAfectadas = pstmt.executeUpdate();
             if (filasAfectadas > 0) {
-                System.out.println("✅ Canal de entrada con ID " + id + " eliminado correctamente.");
+                System.out.println("Canal de entrada con ID " + id + " eliminado correctamente.");
             } else {
-                System.out.println("ℹ️ No se encontró ningún canal de entrada con ID " + id + ".");
+                System.out.println("No se encontró ningún canal de entrada con ID " + id + ".");
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar el canal de entrada: " + e.getMessage());
+            System.err.println("Error al eliminar el canal de entrada: " + e.getMessage());
+        }
+    }
+
+    public static void actualizar(Connection conn, CanalEntrada canal) {
+        String sql = "UPDATE CanalEntrada SET NOMBRECAMPAÑA = ?, FECHAINICIO = ?, FECHAFIN = ?, PRESUPUESTO = ?, ESTADO = ?, DESCRIPCION = ?, TIPO = ?, IDCAMPAÑA = ? WHERE IDCANALENTRADA = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, canal.getNombreCampaña());
+            pstmt.setDate(2, new java.sql.Date(canal.getFechaInicio().getTime()));
+            pstmt.setDate(3, new java.sql.Date(canal.getFechaFin().getTime()));
+            pstmt.setDouble(4, canal.getPresupuesto());
+            pstmt.setString(5, canal.getEstado());
+            pstmt.setString(6, canal.getDescripcion());
+            pstmt.setString(7, canal.getTipo());
+            pstmt.setInt(8, canal.getIdCampaña());
+            pstmt.setInt(9, canal.getIdCanalEntrada());
+
+            int filasActualizadas = pstmt.executeUpdate();
+            if (filasActualizadas > 0) {
+                System.out.println("Canal de entrada actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró un canal de entrada con el ID especificado.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar el canal de entrada: " + e.getMessage());
         }
     }
 }
