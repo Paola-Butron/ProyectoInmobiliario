@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inmuebles;
 
 import java.sql.Connection;
@@ -12,22 +8,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Representa la entidad Duplex. Contiene los datos del modelo y los
- * métodos estáticos para interactuar con la base de datos.
- */
 public class Duplex {
 
-    // --- Atributos que coinciden con la tabla DUPLEX ---
-    private long idInmueble; // Clave Primaria y Foránea
+    private int idInmueble;
     private int niveles;
     private int dormitorios;
     private int banos;
     private String terraza;
     private String accesoIndependiente;
 
-    // --- Constructor ---
-    public Duplex(long idInmueble, int niveles, int dormitorios, int banos, String terraza, String accesoIndependiente) {
+    public Duplex(int idInmueble, int niveles, int dormitorios, int banos, String terraza, String accesoIndependiente) {
         this.idInmueble = idInmueble;
         this.niveles = niveles;
         this.dormitorios = dormitorios;
@@ -36,9 +26,8 @@ public class Duplex {
         this.accesoIndependiente = accesoIndependiente;
     }
 
-    // --- Getters y Setters ---
-    public long getIdInmueble() { return idInmueble; }
-    public void setIdInmueble(long idInmueble) { this.idInmueble = idInmueble; }
+    public int getIdInmueble() { return idInmueble; }
+    public void setIdInmueble(int idInmueble) { this.idInmueble = idInmueble; }
     public int getNiveles() { return niveles; }
     public void setNiveles(int niveles) { this.niveles = niveles; }
     public int getDormitorios() { return dormitorios; }
@@ -50,40 +39,36 @@ public class Duplex {
     public String getAccesoIndependiente() { return accesoIndependiente; }
     public void setAccesoIndependiente(String accesoIndependiente) { this.accesoIndependiente = accesoIndependiente; }
 
-    @Override
+   @Override
     public String toString() {
         return "Duplex{" + "idInmueble=" + idInmueble + ", niveles=" + niveles + ", dormitorios=" + dormitorios + "}";
     }
 
-    // =====================================================================
-    // MÉTODOS DE ACCESO A DATOS (DAO)
-    // =====================================================================
-
     public static void insertar(Connection conn, Duplex duplex) {
         String sql = "INSERT INTO Duplex (IDINMUEBLE, NIVELES, DORMITORIOS, BAÑOS, TERRAZA, ACCESOINDEPENDIENTE) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, duplex.getIdInmueble());
+            pstmt.setInt(1, duplex.getIdInmueble());
             pstmt.setInt(2, duplex.getNiveles());
             pstmt.setInt(3, duplex.getDormitorios());
             pstmt.setInt(4, duplex.getBanos());
             pstmt.setString(5, duplex.getTerraza());
             pstmt.setString(6, duplex.getAccesoIndependiente());
             pstmt.executeUpdate();
-            System.out.println("✅ Nuevo duplex insertado correctamente.");
+            System.out.println("Nuevo duplex insertado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al insertar el duplex: " + e.getMessage());
+            System.err.println("Error al insertar el duplex: " + e.getMessage());
         }
     }
 
-    public static Duplex buscarPorId(Connection conn, long id) {
+    public static Duplex buscarPorId(Connection conn, int id) {
         String sql = "SELECT * FROM Duplex WHERE IDINMUEBLE = ?";
         Duplex duplex = null;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     duplex = new Duplex(
-                        rs.getLong("IDINMUEBLE"),
+                        rs.getInt("IDINMUEBLE"),
                         rs.getInt("NIVELES"),
                         rs.getInt("DORMITORIOS"),
                         rs.getInt("BAÑOS"),
@@ -93,7 +78,7 @@ public class Duplex {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar el duplex: " + e.getMessage());
+            System.err.println("Error al buscar el duplex: " + e.getMessage());
         }
         return duplex;
     }
@@ -105,7 +90,7 @@ public class Duplex {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 lista.add(new Duplex(
-                    rs.getLong("IDINMUEBLE"),
+                    rs.getInt("IDINMUEBLE"),
                     rs.getInt("NIVELES"),
                     rs.getInt("DORMITORIOS"),
                     rs.getInt("BAÑOS"),
@@ -114,23 +99,44 @@ public class Duplex {
                 ));
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener todos los duplex: " + e.getMessage());
+            System.err.println("Error al obtener todos los duplex: " + e.getMessage());
         }
         return lista;
     }
 
-    public static void eliminar(Connection conn, long id) {
+    public static void eliminar(Connection conn, int id) {
         String sql = "DELETE FROM Duplex WHERE IDINMUEBLE = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             int filasAfectadas = pstmt.executeUpdate();
             if (filasAfectadas > 0) {
-                System.out.println("✅ Duplex con ID " + id + " eliminado correctamente.");
+                System.out.println("Duplex con ID " + id + " eliminado correctamente.");
             } else {
-                System.out.println("ℹ️ No se encontró ningún duplex con ID " + id + ".");
+                System.out.println("No se encontró ningún duplex con ID " + id + ".");
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar el duplex: " + e.getMessage());
+            System.err.println("Error al eliminar el duplex: " + e.getMessage());
+        }
+    }
+
+    public static void actualizar(Connection conn, Duplex duplex) {
+        String sql = "UPDATE Duplex SET NIVELES = ?, DORMITORIOS = ?, BAÑOS = ?, TERRAZA = ?, ACCESOINDEPENDIENTE = ? WHERE IDINMUEBLE = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, duplex.getNiveles());
+            pstmt.setInt(2, duplex.getDormitorios());
+            pstmt.setInt(3, duplex.getBanos());
+            pstmt.setString(4, duplex.getTerraza());
+            pstmt.setString(5, duplex.getAccesoIndependiente());
+            pstmt.setInt(6, duplex.getIdInmueble());
+
+            int filasAfectadas = pstmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("Duplex actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró un duplex con el ID especificado.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar el duplex: " + e.getMessage());
         }
     }
 }

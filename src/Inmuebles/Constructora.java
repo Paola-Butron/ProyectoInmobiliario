@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inmuebles;
 
 import java.sql.Connection;
@@ -12,11 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Constructora {
 
-    // --- Atributos que coinciden con la tabla CONSTRUCTORA ---
-    private long idConstructora;
+    private int idConstructora;
     private String nombreConstructora;
     private String ruc;
     private String gerenteGeneral;
@@ -24,9 +18,7 @@ public class Constructora {
     private String telefono;
     private String email;
 
-    // --- Constructor ---
-    // Único constructor que exige todos los datos para crear un objeto válido.
-    public Constructora(long idConstructora, String nombreConstructora, String ruc, String gerenteGeneral, String direccionFiscal, String telefono, String email) {
+    public Constructora(int idConstructora, String nombreConstructora, String ruc, String gerenteGeneral, String direccionFiscal, String telefono, String email) {
         this.idConstructora = idConstructora;
         this.nombreConstructora = nombreConstructora;
         this.ruc = ruc;
@@ -36,9 +28,8 @@ public class Constructora {
         this.email = email;
     }
 
-    // --- Getters y Setters ---
-    public long getIdConstructora() { return idConstructora; }
-    public void setIdConstructora(long idConstructora) { this.idConstructora = idConstructora; }
+    public int getIdConstructora() { return idConstructora; }
+    public void setIdConstructora(int idConstructora) { this.idConstructora = idConstructora; }
     public String getNombreConstructora() { return nombreConstructora; }
     public void setNombreConstructora(String nombreConstructora) { this.nombreConstructora = nombreConstructora; }
     public String getRuc() { return ruc; }
@@ -57,11 +48,10 @@ public class Constructora {
         return "Constructora{" + "idConstructora=" + idConstructora + ", nombre='" + nombreConstructora + "'}";
     }
 
-
     public static void insertar(Connection conn, Constructora constructora) {
         String sql = "INSERT INTO Constructora (IDCONSTRUCTORA, NOMBRECONSTRUCTORA, RUC, GERENTEGENERAL, DIRECCIONFISCAL, TELEFONO, EMAIL) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, constructora.getIdConstructora());
+            pstmt.setInt(1, constructora.getIdConstructora());
             pstmt.setString(2, constructora.getNombreConstructora());
             pstmt.setString(3, constructora.getRuc());
             pstmt.setString(4, constructora.getGerenteGeneral());
@@ -69,21 +59,21 @@ public class Constructora {
             pstmt.setString(6, constructora.getTelefono());
             pstmt.setString(7, constructora.getEmail());
             pstmt.executeUpdate();
-            System.out.println("✅ Nueva constructora insertada correctamente.");
+            System.out.println("Nueva constructora insertada correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al insertar la constructora: " + e.getMessage());
+            System.err.println("Error al insertar la constructora: " + e.getMessage());
         }
     }
 
-    public static Constructora buscarPorId(Connection conn, long id) {
+    public static Constructora buscarPorId(Connection conn, int id) {
         String sql = "SELECT * FROM Constructora WHERE IDCONSTRUCTORA = ?";
         Constructora constructora = null;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     constructora = new Constructora(
-                        rs.getLong("IDCONSTRUCTORA"),
+                        rs.getInt("IDCONSTRUCTORA"),
                         rs.getString("NOMBRECONSTRUCTORA"),
                         rs.getString("RUC"),
                         rs.getString("GERENTEGENERAL"),
@@ -94,7 +84,7 @@ public class Constructora {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar la constructora: " + e.getMessage());
+            System.err.println("Error al buscar la constructora: " + e.getMessage());
         }
         return constructora;
     }
@@ -106,7 +96,7 @@ public class Constructora {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 listaConstructoras.add(new Constructora(
-                    rs.getLong("IDCONSTRUCTORA"),
+                    rs.getInt("IDCONSTRUCTORA"),
                     rs.getString("NOMBRECONSTRUCTORA"),
                     rs.getString("RUC"),
                     rs.getString("GERENTEGENERAL"),
@@ -116,45 +106,45 @@ public class Constructora {
                 ));
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener todas las constructoras: " + e.getMessage());
+            System.err.println("Error al obtener todas las constructoras: " + e.getMessage());
         }
         return listaConstructoras;
     }
 
-    public static void eliminar(Connection conn, long id) {
+    public static void eliminar(Connection conn, int id) {
         String sql = "DELETE FROM Constructora WHERE IDCONSTRUCTORA = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             int filasAfectadas = pstmt.executeUpdate();
             if (filasAfectadas > 0) {
-                System.out.println("✅ Constructora con ID " + id + " eliminada correctamente.");
+                System.out.println("Constructora con ID " + id + " eliminada correctamente.");
             } else {
-                System.out.println("ℹ️ No se encontró ninguna constructora con ID " + id + ".");
+                System.out.println("No se encontró ninguna constructora con ID " + id + ".");
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar la constructora: " + e.getMessage());
+            System.err.println("Error al eliminar la constructora: " + e.getMessage());
         }
     }
-    
-    public static void actualizar(Connection conn, Constructora c) {
-    String sql = "UPDATE Constructora SET nombreConstructora = ?, ruc = ?, gerenteGeneral = ?, direccionFiscal = ?, telefono = ?, email = ? WHERE IDCONSTRUCTORA = ?";
-    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        pstmt.setString(1, c.getNombreConstructora());
-        pstmt.setString(2, c.getRuc());
-        pstmt.setString(3, c.getGerenteGeneral());
-        pstmt.setString(4, c.getDireccionFiscal());
-        pstmt.setString(5, c.getTelefono());
-        pstmt.setString(6, c.getEmail());
-        pstmt.setLong(7, c.getIdConstructora());
 
-        int filasAfectadas = pstmt.executeUpdate();
-        if (filasAfectadas > 0) {
-            System.out.println("✅ Constructora con ID " + c.getIdConstructora() + " actualizada correctamente.");
-        } else {
-            System.out.println("ℹ️ No se encontró ninguna constructora con ID " + c.getIdConstructora() + ".");
+    public static void actualizar(Connection conn, Constructora c) {
+        String sql = "UPDATE Constructora SET NOMBRECONSTRUCTORA = ?, RUC = ?, GERENTEGENERAL = ?, DIRECCIONFISCAL = ?, TELEFONO = ?, EMAIL = ? WHERE IDCONSTRUCTORA = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, c.getNombreConstructora());
+            pstmt.setString(2, c.getRuc());
+            pstmt.setString(3, c.getGerenteGeneral());
+            pstmt.setString(4, c.getDireccionFiscal());
+            pstmt.setString(5, c.getTelefono());
+            pstmt.setString(6, c.getEmail());
+            pstmt.setInt(7, c.getIdConstructora());
+
+            int filasAfectadas = pstmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("Constructora con ID " + c.getIdConstructora() + " actualizada correctamente.");
+            } else {
+                System.out.println("No se encontró ninguna constructora con ID " + c.getIdConstructora() + ".");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar la constructora: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.err.println("❌ Error al actualizar la constructora: " + e.getMessage());
-    }
     }
 }

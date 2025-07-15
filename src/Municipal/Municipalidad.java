@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Municipal;
 
 import java.sql.Connection;
@@ -15,16 +11,14 @@ import java.util.List;
 
 public class Municipalidad {
 
-    // --- Atributos que coinciden con la tabla MUNICIPALIDAD ---
-    private long idMunicipalidad;
+    private int idMunicipalidad;
     private String nombre;
     private String distrito;
     private String direccion;
     private String areaEncargada;
     private String serviciosRelacionados;
 
-    // --- Constructor ---
-    public Municipalidad(long idMunicipalidad, String nombre, String distrito, String direccion, String areaEncargada, String serviciosRelacionados) {
+    public Municipalidad(int idMunicipalidad, String nombre, String distrito, String direccion, String areaEncargada, String serviciosRelacionados) {
         this.idMunicipalidad = idMunicipalidad;
         this.nombre = nombre;
         this.distrito = distrito;
@@ -33,9 +27,8 @@ public class Municipalidad {
         this.serviciosRelacionados = serviciosRelacionados;
     }
 
-    // --- Getters y Setters ---
-    public long getIdMunicipalidad() { return idMunicipalidad; }
-    public void setIdMunicipalidad(long idMunicipalidad) { this.idMunicipalidad = idMunicipalidad; }
+    public int getIdMunicipalidad() { return idMunicipalidad; }
+    public void setIdMunicipalidad(int idMunicipalidad) { this.idMunicipalidad = idMunicipalidad; }
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getDistrito() { return distrito; }
@@ -52,35 +45,31 @@ public class Municipalidad {
         return "Municipalidad{" + "idMunicipalidad=" + idMunicipalidad + ", nombre='" + nombre + "'}";
     }
 
-    // =====================================================================
-    // MÉTODOS DE ACCESO A DATOS (DAO)
-    // =====================================================================
-
     public static void insertar(Connection conn, Municipalidad municipalidad) {
         String sql = "INSERT INTO Municipalidad (IDMUNICIPALIDAD, NOMBRE, DISTRITO, DIRECCION, AREAENCARGADA, SERVICIOSRELACIONADOS) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, municipalidad.getIdMunicipalidad());
+            pstmt.setInt(1, municipalidad.getIdMunicipalidad());
             pstmt.setString(2, municipalidad.getNombre());
             pstmt.setString(3, municipalidad.getDistrito());
             pstmt.setString(4, municipalidad.getDireccion());
             pstmt.setString(5, municipalidad.getAreaEncargada());
             pstmt.setString(6, municipalidad.getServiciosRelacionados());
             pstmt.executeUpdate();
-            System.out.println("✅ Nueva municipalidad insertada correctamente.");
+            System.out.println("Nueva municipalidad insertada correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al insertar la municipalidad: " + e.getMessage());
+            System.err.println("Error al insertar la municipalidad: " + e.getMessage());
         }
     }
 
-    public static Municipalidad buscarPorId(Connection conn, long id) {
+    public static Municipalidad buscarPorId(Connection conn, int id) {
         String sql = "SELECT * FROM Municipalidad WHERE IDMUNICIPALIDAD = ?";
         Municipalidad municipalidad = null;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     municipalidad = new Municipalidad(
-                        rs.getLong("IDMUNICIPALIDAD"),
+                        rs.getInt("IDMUNICIPALIDAD"),
                         rs.getString("NOMBRE"),
                         rs.getString("DISTRITO"),
                         rs.getString("DIRECCION"),
@@ -90,7 +79,7 @@ public class Municipalidad {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar la municipalidad: " + e.getMessage());
+            System.err.println("Error al buscar la municipalidad: " + e.getMessage());
         }
         return municipalidad;
     }
@@ -102,7 +91,7 @@ public class Municipalidad {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 lista.add(new Municipalidad(
-                    rs.getLong("IDMUNICIPALIDAD"),
+                    rs.getInt("IDMUNICIPALIDAD"),
                     rs.getString("NOMBRE"),
                     rs.getString("DISTRITO"),
                     rs.getString("DIRECCION"),
@@ -111,15 +100,15 @@ public class Municipalidad {
                 ));
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener todas las municipalidades: " + e.getMessage());
+            System.err.println("Error al obtener todas las municipalidades: " + e.getMessage());
         }
         return lista;
     }
 
-    public static void eliminar(Connection conn, long id) {
+    public static void eliminar(Connection conn, int id) {
         String sql = "DELETE FROM Municipalidad WHERE IDMUNICIPALIDAD = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             int filasAfectadas = pstmt.executeUpdate();
             if (filasAfectadas > 0) {
                 System.out.println("✅ Municipalidad con ID " + id + " eliminada correctamente.");
@@ -128,6 +117,27 @@ public class Municipalidad {
             }
         } catch (SQLException e) {
             System.err.println("❌ Error al eliminar la municipalidad: " + e.getMessage());
+        }
+    }
+
+    public static void actualizar(Connection conn, Municipalidad municipalidad) {
+        String sql = "UPDATE Municipalidad SET NOMBRE = ?, DISTRITO = ?, DIRECCION = ?, AREAENCARGADA = ?, SERVICIOSRELACIONADOS = ? WHERE IDMUNICIPALIDAD = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, municipalidad.getNombre());
+            pstmt.setString(2, municipalidad.getDistrito());
+            pstmt.setString(3, municipalidad.getDireccion());
+            pstmt.setString(4, municipalidad.getAreaEncargada());
+            pstmt.setString(5, municipalidad.getServiciosRelacionados());
+            pstmt.setInt(6, municipalidad.getIdMunicipalidad());
+
+            int filasActualizadas = pstmt.executeUpdate();
+            if (filasActualizadas > 0) {
+                System.out.println("Municipalidad actualizada correctamente.");
+            } else {
+                System.out.println("No se encontró una municipalidad con el ID especificado.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar la municipalidad: " + e.getMessage());
         }
     }
 }
